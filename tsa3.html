@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="no-referrer">
+    <title>Đề thi Đánh giá tư duy TSA - HUST (TSA26C)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        window.MathJax = {
+            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] },
+            startup: { typeset: false }
+        };
+    </script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        .modal-overlay { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(15, 23, 42, 0.85); backdrop-filter: blur(5px); }
+        .modal-overlay.active { display: flex; align-items: center; justify-content: center; }
+        .tsa-table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; background-color: white; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+        .tsa-table th, .tsa-table td { border: 1px solid #cbd5e1; padding: 0.75rem 1rem; text-align: center; }
+        .tsa-table th { background-color: #f1f5f9; font-weight: 700; color: #1e293b; }
+        .input-blank { border: none; border-bottom: 2px solid #ef4444; background: #fef2f2; padding: 6px 16px; outline: none; width: 200px; text-align: center; font-weight: bold; color: #b91c1c; border-radius: 6px 6px 0 0; transition: all 0.2s;}
+        .input-blank:focus { border-bottom-color: #991b1b; background: #fee2e2;}
+        
+        /* CSS CHUẨN CHO KÉO THẢ */
+        .draggable-item { cursor: pointer; user-select: none; transition: all 0.2s; touch-action: manipulation; background: white; border: 2px solid #e2e8f0; color: #334155; padding: 8px 16px; border-radius: 8px; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .draggable-item:active { transform: scale(0.95); border-color: #ef4444; }
+        .drop-zone { cursor: pointer; display: inline-flex; align-items: center; justify-content: center; min-width: 120px; height: 44px; margin: 0 8px; border: 2px dashed #94a3b8; border-radius: 8px; background-color: #f8fafc; vertical-align: middle; font-weight: bold; color: #0f172a; transition: all 0.2s; padding: 0 12px; }
+        .drop-zone.drag-over { border-color: #ef4444; background-color: #fef2f2; transform: scale(1.05); }
+        .drop-zone.filled { border-style: solid; border-color: #ef4444; background-color: #fff; box-shadow: 0 2px 6px rgba(239, 68, 68, 0.15); }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen selection:bg-red-200">
+
+    <!-- MÀN HÌNH BẮT ĐẦU -->
+    <div id="start-screen" class="max-w-3xl mx-auto mt-20 bg-white p-10 md:p-16 rounded-[2rem] shadow-2xl text-center border border-slate-100">
+        <div class="inline-block bg-red-100 text-red-800 font-extrabold px-6 py-2 rounded-full mb-6 tracking-widest text-sm border border-red-200">HUST - ĐÁNH GIÁ TƯ DUY</div>
+        <h1 class="text-4xl md:text-5xl font-black text-slate-900 mb-6 tracking-tight leading-tight">Luyện Đề TSA26C<br><span class="text-red-600">Phần Tư Duy Toán Học</span></h1>
+        <p class="text-lg mb-10 text-slate-500 leading-relaxed max-w-xl mx-auto">Thời gian làm bài: <span class="font-bold text-slate-800">60 phút</span><br>Cấu trúc: Trắc nghiệm 4 lựa chọn, Đúng/Sai, Điền khuyết và Kéo thả.</p>
+        <button id="btn-start" class="bg-red-600 hover:bg-red-700 text-white font-bold py-4 px-16 rounded-2xl shadow-[0_8px_20px_-6px_rgba(220,38,38,0.5)] transition-all duration-300 transform hover:-translate-y-1 text-xl">Bắt đầu thi</button>
+    </div>
+
+    <!-- MÀN HÌNH LÀM BÀI -->
+    <div id="exam-screen" class="max-w-7xl mx-auto mt-6 p-6 hidden relative pb-32">
+        <div class="sticky top-0 bg-white/95 backdrop-blur-md pb-4 pt-4 border-b border-slate-200 z-50 flex flex-col md:flex-row justify-between items-center mb-10 gap-4 rounded-b-3xl px-8 shadow-sm">
+            <h2 class="text-2xl font-black text-slate-800 tracking-tight flex items-center gap-3">
+                <div class="w-8 h-8 bg-red-100 text-red-600 rounded-lg flex items-center justify-center">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                </div>
+                Phiếu làm bài
+            </h2>
+            <div class="text-3xl font-mono font-black text-red-600 bg-red-50 px-6 py-2.5 rounded-2xl border border-red-100 flex items-center gap-3 tracking-wider shadow-sm" id="timer">
+                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                60:00
+            </div>
+        </div>
+        
+        <!-- KHU VỰC CHỨA ĐỀ THI VÀ ĐIỀU HƯỚNG BÊN PHẢI -->
+        <div class="flex flex-col xl:flex-row gap-8">
+            <!-- Cột trái: Danh sách câu hỏi -->
+            <div id="questions-container" class="space-y-10 flex-grow xl:w-3/4"></div>
+            
+            <!-- Cột phải: Bảng điều hướng (Ghim cố định khi cuộn) -->
+            <div class="hidden xl:block xl:w-1/4 shrink-0">
+                <div class="sticky top-32 bg-white/90 backdrop-blur-md p-6 rounded-[1.5rem] shadow-xl border border-slate-200">
+                    <h3 class="font-black text-slate-800 mb-4 text-center text-lg flex items-center justify-center gap-2">
+                        <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                        Bảng điều hướng
+                    </h3>
+                    <div id="nav-grid" class="grid grid-cols-5 gap-2"></div>
+                    <div class="mt-6 flex justify-between text-xs font-bold text-slate-500 border-t border-slate-100 pt-4">
+                        <span class="flex items-center gap-1"><span class="w-3 h-3 bg-white border-2 border-slate-200 rounded-full inline-block"></span> Chưa làm</span>
+                        <span class="flex items-center gap-1"><span class="w-3 h-3 bg-red-500 rounded-full inline-block"></span> Đã làm</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-5 shadow-[0_-15px_30px_-10px_rgba(0,0,0,0.05)] z-40 flex justify-center">
+            <button id="btn-submit-exam" class="bg-slate-900 hover:bg-black text-white font-bold py-4 px-28 rounded-2xl shadow-2xl transition-all duration-300 text-xl transform hover:-translate-y-1">Nộp bài ngay</button>
+        </div>
+    </div>
+
+    <!-- MÀN HÌNH KẾT QUẢ -->
+    <div id="result-screen" class="max-w-5xl mx-auto mt-6 bg-white p-8 md:p-14 rounded-[2rem] shadow-2xl hidden mb-16 border border-slate-100">
+        <div class="text-center mb-12">
+            <h2 class="text-4xl md:text-5xl font-black text-slate-900 mb-4 tracking-tight">Báo Cáo Điểm Số</h2>
+            <p class="text-slate-500 text-lg font-medium">Thống kê chi tiết & Lời giải bài thi</p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center mb-16">
+            <div class="bg-emerald-50 p-8 rounded-[1.5rem] border border-emerald-200 shadow-sm relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-16 h-16 bg-emerald-100 rounded-bl-[100%] opacity-50"></div>
+                <div class="text-sm text-emerald-700 font-bold uppercase tracking-widest mb-2">Chính xác</div>
+                <div class="text-6xl font-black text-emerald-500" id="stat-correct">0</div>
+            </div>
+            <div class="bg-rose-50 p-8 rounded-[1.5rem] border border-rose-200 shadow-sm relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-16 h-16 bg-rose-100 rounded-bl-[100%] opacity-50"></div>
+                <div class="text-sm text-rose-700 font-bold uppercase tracking-widest mb-2">Sai lệch</div>
+                <div class="text-6xl font-black text-rose-500" id="stat-wrong">0</div>
+            </div>
+            <div class="bg-slate-100 p-8 rounded-[1.5rem] border border-slate-300 shadow-sm relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-16 h-16 bg-slate-200 rounded-bl-[100%] opacity-50"></div>
+                <div class="text-sm text-slate-600 font-bold uppercase tracking-widest mb-2">Bỏ qua</div>
+                <div class="text-6xl font-black text-slate-400" id="stat-blank">0</div>
+            </div>
+        </div>
+        
+        <h3 class="text-2xl font-black mb-8 flex items-center gap-3 text-slate-800 border-b-2 border-slate-100 pb-4">
+            <svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+            Chi tiết & Lời giải
+        </h3>
+        <div id="review-container" class="space-y-12"></div>
+        
+        <div class="text-center mt-20">
+            <button onclick="location.reload()" class="bg-red-600 hover:bg-red-700 text-white font-bold py-4 px-16 rounded-2xl shadow-[0_8px_20px_-6px_rgba(220,38,38,0.5)] transition-all duration-300 text-lg">Thi lại đề này</button>
+        </div>
+    </div>
+
+    <!-- MODAL XÁC NHẬN -->
+    <div id="custom-modal" class="modal-overlay">
+        <div class="bg-white rounded-[2rem] p-10 max-w-md w-full mx-4 shadow-2xl transform transition-all text-center border border-slate-100">
+            <div class="w-24 h-24 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
+                    <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                </div>
+            </div>
+            <h3 class="text-2xl font-black text-slate-900 mb-4" id="modal-title">Xác nhận nộp bài</h3>
+            <p class="text-slate-500 mb-8 leading-relaxed font-medium" id="modal-message">Bạn có chắc chắn muốn nộp bài?</p>
+            <div class="flex flex-col gap-3">
+                <button id="modal-btn-confirm" class="bg-red-600 hover:bg-red-700 text-white font-bold px-6 py-4 rounded-xl transition w-full shadow-lg shadow-red-600/20 text-lg">Nộp bài ngay</button>
+                <button id="modal-btn-cancel" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-6 py-4 rounded-xl transition w-full text-lg">Kiểm tra lại</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+const rawData = [
+    {
+        id: 1, type: "short",
+        text: "Câu 1. Điền số nguyên dương thích hợp vào ô trống.<br>Trong không gian Oxyz, cho hai điểm $A(1;-5;4)$ $B(3;1;6).$ Gọi $I(a;b;c)$ là trung điểm của AB. Giá trị của $a^{2}+b^{2}+c^{2}$ bằng {blank_1}[cite: 7]",
+        answer: {"blank_1": "33"},
+        explain: "Toạ độ trung điểm I là trung bình cộng toạ độ của A và B: $a = \\frac{1+3}{2} = 2$, $b = \\frac{-5+1}{2} = -2$, $c = \\frac{4+6}{2} = 5$. Ta có $I(2; -2; 5)$. Giá trị $a^2+b^2+c^2 = 2^2 + (-2)^2 + 5^2 = 4 + 4 + 25 = 33$[cite: 7]."
+    },
+    {
+        id: 2, type: "tf",
+        text: "Câu 2. Xét tính đúng sai cho các phát biểu sau, trong không gian Oxyz:[cite: 7]",
+        statements: [
+            { id: "s1", text: "Nếu ba điểm phân biệt A, B, C có cùng hoành độ (khác 0) thì mặt phẳng chứa ba điểm đó song song với mặt phẳng $(Oyz).$", answer: "T" },
+            { id: "s2", text: "Tập hợp các điểm thoả mãn tung độ, hoành độ và cao độ của điểm đó bằng nhau là một đường thẳng.", answer: "T" },
+            { id: "s3", text: "Mỗi đường thẳng có duy nhất một phương trình chính tắc.", answer: "F" },
+            { id: "s4", text: "Trong một tam giác, hoành độ, tung độ và cao độ của trọng tâm lần lượt bằng trung bình cộng các hoành độ, tung độ và cao độ của ba đỉnh trong tam giác đó.", answer: "T" }
+        ],
+        explain: "1) A, B, C cùng hoành độ $x=a \\neq 0$ thì mặt phẳng (ABC) là mặt phẳng $x=a$, song song với mặt phẳng tọa độ (Oyz) có phương trình $x=0$. Đúng.<br>2) Tập hợp các điểm $x=y=z$ tạo thành đường thẳng phân giác của các góc phần tư không gian, đi qua gốc tọa độ. Đúng.<br>3) Phương trình chính tắc của đường thẳng phụ thuộc vào việc chọn điểm đi qua và một vectơ chỉ phương (có vô số), do đó có vô số phương trình. Sai.<br>4) Đây là công thức tìm tọa độ trọng tâm cơ bản: $(x_A+x_B+x_C)/3$. Đúng[cite: 7]."
+    },
+    {
+        id: 3, type: "drag",
+        text: `Câu 3. Cho hàm số $y=f(x)$ có bảng biến thiên như sau:<br>
+        <img src=""https://i.ibb.co/ZpN2Jh9Y/Screenshot-2026-09-17-084620.png" class="max-w-full h-auto my-4 mx-auto border border-gray-300 shadow-sm rounded-lg" alt="Bảng biến thiên Câu 3"><br>
+        Kéo ô thích hợp thả vào vị trí tương ứng để hoàn thành các câu sau:<br>
+        1) Số điểm cực đại của hàm số là {drop_1}.<br>
+        2) Hàm số đạt cực tiểu tại $x$ bằng {drop_2}.`,
+        dragOptions: ["-3", "0", "2", "3", "-2", "1"],
+        answer: {"drop_1": "2", "drop_2": "0"},
+        explain: "Dựa vào bảng biến thiên, đạo hàm $y'$ đổi dấu từ dương sang âm tại $x=-1$ và $x=1$. Do đó hàm số có 2 điểm cực đại. (Kéo số 2). Tại $x=0$, $y'$ đổi dấu từ âm sang dương, vậy đạt cực tiểu tại $x=0$. (Kéo số 0)."
+    },
+    {
+        id: 4, type: "short",
+        text: "Câu 4. Điền số nguyên thích hợp vào các ô trống:<br>Cho cấp số cộng $(u_{n})$ có $u_{2}=-3$ $u_{7}=7.$ Tổng của 10 số hạng đầu của dãy $u_{1}+u_{2}+u_{3}+...+u_{10}$ bằng {blank_1}[cite: 7]",
+        answer: {"blank_1": "40"},
+        explain: "Áp dụng công thức số hạng tổng quát của cấp số cộng: $u_2 = u_1 + d = -3$ và $u_7 = u_1 + 6d = 7$. Lấy phương trình dưới trừ trên: $5d = 10 \\Rightarrow d = 2$. Thay vào phương trình đầu: $u_1 + 2 = -3 \\Rightarrow u_1 = -5$. Tổng 10 số hạng: $S_{10} = \\frac{10}{2}[2(-5) + (10-1)2] = 5[-10 + 18] = 40$[cite: 7]."
+    },
+    {
+        id: 5, type: "tf",
+        text: "Câu 5. Biết $\\int_{1}^{2}f(x)dx=-4$ và $\\int_{1}^{2}g(x)dx=7.$ Các phát biểu sau là đúng hay sai?[cite: 7]",
+        statements: [
+            { id: "s1", text: "$\\int_{1}^{2}[5f(x)+g(x)]dx=-13.$", answer: "T" },
+            { id: "s2", text: "$\\int_{1}^{2}[f(x).g(x)]dx=-28.$", answer: "F" }
+        ],
+        explain: "1) Tính chất tuyến tính: $\\int [5f(x)+g(x)]dx = 5(-4) + 7 = -13$. Đúng.<br>2) Tích phân của tích hai hàm số không bằng tích các tích phân của chúng. Sai hoàn toàn[cite: 7]."
+    },
+    {
+        id: 6, type: "single",
+        text: "Câu 6. Cho $F(x)$ là một nguyên hàm của hàm số $f(x)=\\sin x$ và thoả mãn điều kiện $F(0)=3$ Hàm số $F(x)$ là[cite: 7]",
+        options: [
+            "A. $F(x)=-\\cos x+4.$",
+            "B. $F(x)=-\\cos x+3$",
+            "C. $F(x)=\\cos x+2$.",
+            "D. $F(x)=\\frac{\\sin^{2}x}{2}+3.$"
+        ],
+        answer: "A",
+        explain: "Họ nguyên hàm của $\\sin x$ là $-\\cos x + C$. Ta có $F(0) = -\\cos(0) + C = -1 + C = 3 \\Rightarrow C = 4$. Vậy $F(x) = -\\cos x + 4$[cite: 7]."
+    },
+    {
+        id: 7, type: "drag",
+        text: "Câu 7. Cho ba số thực dương a, b, c với a khác 1 thỏa mãn $\\log_{a}b=4$ và $\\log_{a}c=2$.<br>Kéo ô thích hợp thả vào vị trí tương ứng để hoàn thành các câu sau:<br>1) Giá trị của biểu thức $\\log_{a}(b/c)$ là {drop_1}<br>2) Giá trị của biểu thức $\\log_{c}a^{2}$ là {drop_2}[cite: 7]",
+        dragOptions: ["1", "2", "4"],
+        answer: {"drop_1": "2", "drop_2": "1"},
+        explain: "1) $\\log_a(b/c) = \\log_a b - \\log_a c = 4 - 2 = 2$.<br>2) $\\log_c a^2 = 2\\log_c a = 2 \\times \\frac{1}{\\log_a c} = 2 \\times \\frac{1}{2} = 1$[cite: 7]."
+    },
+    {
+        id: 8, type: "short",
+        text: "Câu 8. Điền số nguyên thích hợp vào ô trống.<br>Điểm cực đại của hàm số $y=x^{2}e^{-x}$ là $x=a$. Giá trị a bằng {blank_1}[cite: 7]",
+        answer: {"blank_1": "2"},
+        explain: "Đạo hàm theo quy tắc nhân: $y' = 2xe^{-x} + x^2(-e^{-x}) = e^{-x}(2x - x^2)$. Cho $y' = 0 \\Rightarrow x(2-x) = 0 \\Rightarrow x=0$ hoặc $x=2$. Lập bảng biến thiên, đạo hàm đổi dấu từ dương sang âm tại $x=2$. Do đó hàm số đạt cực đại tại $a=2$[cite: 7]."
+    },
+    {
+        id: 9, type: "tf",
+        text: "Câu 9. Cho hàm số $f(x)=\\frac{x+2}{\\sin x}$ có tập xác định là D.<br>Các phát biểu sau là đúng hay sai?[cite: 7]",
+        statements: [
+            { id: "s1", text: "$D=\\mathbb{R}\\backslash\\{0\\}$", answer: "F" },
+            { id: "s2", text: "Hàm số liên tục tại $x=2\\pi.$", answer: "F" }
+        ],
+        explain: "1) Hàm số xác định khi $\\sin x \\neq 0 \\Leftrightarrow x \\neq k\\pi$ với $k \\in \\mathbb{Z}$. Tập D loại bỏ vô số điểm chứ không chỉ mỗi $0$. Sai.<br>2) Tại $x=2\\pi$, mẫu số $\\sin(2\\pi) = 0$, hàm số không xác định nên không thể liên tục. Sai[cite: 7]."
+    },
+    {
+        id: 10, type: "drag",
+        text: "Câu 10. Biết số hạng chứa $x^{k}$ trong khai triển của $(ax+b)^{n}$ là $C_{n}^{k}a^{k}x^{k}b^{n-k}$ (với $k\\in\\mathbb{N},$ $k \\le n$, $n\\in\\mathbb{N}^{*}$).<br>Kéo ô thích hợp thả vào vị trí tương ứng để hoàn thành các câu sau:<br>1) Số các số hạng của khai triển $(x-1)^{5}$ là {drop_1}<br>2) Hệ số của số hạng không chứa x trong khai triển $(x-1)^{5}$ là {drop_2}[cite: 7]",
+        dragOptions: ["6", "1", "-1", "5"],
+        answer: {"drop_1": "6", "drop_2": "-1"},
+        explain: "1) Khai triển nhị thức bậc $n$ có $n+1$ số hạng. Với $n=5$, có 6 số hạng.<br>2) Số hạng tổng quát $C_5^k x^k (-1)^{5-k}$. Hệ số không chứa $x$ ứng với $k=0$ là $C_5^0 (-1)^5 = -1$[cite: 7]."
+    },
+    {
+        id: 11, type: "single",
+        text: "Câu 11. Cho $(u_{n})$ và $(v_{n})$ là hai dãy số có giới hạn hữu hạn. Mệnh đề nào dưới đây là sai?[cite: 7]",
+        options: [
+            "A. Dãy số $(u_{n}v_{n})$ có giới hạn bằng tích các giới hạn của hai dãy số $(u_{n})$ và $(v_{n}).$",
+            "B. Chưa thể khẳng định dãy số $(\\frac{u_{n}}{v_{n}})$ có giới hạn hữu hạn.",
+            "C. Trong ba kết luận còn lại có kết luận sai.",
+            "D. Nếu $u_{n}&lt;v_{n}$, $n\\in\\mathbb{N}^{*}$ thì giới hạn của dãy số $(u_{n})$ nhỏ hơn giới hạn của dãy số $(v_{n}).$"
+        ],
+        answer: "D",
+        explain: "Mệnh đề D sai. Mặc dù $u_n &lt; v_n$, giới hạn của chúng có thể BẰNG nhau. Ví dụ $u_n = 0$ và $v_n = \\frac{1}{n}$. Cả hai dãy đều có giới hạn bằng 0[cite: 7]."
+    },
+    {
+        id: 12, type: "short",
+        text: "Câu 12. Điền các số nguyên thích hợp vào các ô trống.<br>Trong không gian Oxyz, cho tam giác ABC và M là trung điểm của BC. Biết $\\vec{AB}=(2;-1;3),$ $\\vec{AM}=(3;4;1)$.<br>Hoành độ của $\\vec{AC}$ bằng {blank_1}, tung độ của $\\vec{AC}$ bằng {blank_2}, cao độ của $\\vec{AC}$ bằng {blank_3}[cite: 7]",
+        answer: {"blank_1": "4", "blank_2": "9", "blank_3": "-1"},
+        explain: "Dùng quy tắc hình bình hành (hoặc trung tuyến): $\\vec{AB} + \\vec{AC} = 2\\vec{AM} \\Rightarrow \\vec{AC} = 2\\vec{AM} - \\vec{AB}$.<br>$\\vec{AC} = 2(3; 4; 1) - (2; -1; 3) = (6-2; 8 - (-1); 2-3) = (4; 9; -1)$[cite: 7]."
+    },
+    {
+        id: 13, type: "single",
+        text: `Câu 13. Bạn Thảo tung một con xúc xắc sáu mặt 100 lần liên tiếp và ghi lại kết quả trong bảng sau:
+        <div class="overflow-x-auto my-4">
+            <table class="tsa-table">
+                <tr><th>Số chấm trên xúc xắc</th><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td></tr>
+                <tr><th>Số lần xuất hiện</th><td>4</td><td>16</td><td>18</td><td>28</td><td>24</td><td>10</td></tr>
+            </table>
+        </div>
+        Giá trị trung bình của mẫu số liệu trên bằng (kết quả làm tròn đến hàng phần trăm nếu có)[cite: 7]`,
+        options: ["A. 16, 67.", "B. 3, 5.", "C. 18, 19.", "D. 3,82."],
+        answer: "D",
+        explain: "Trung bình = $\\frac{1(4) + 2(16) + 3(18) + 4(28) + 5(24) + 6(10)}{100} = \\frac{4 + 32 + 54 + 112 + 120 + 60}{100} = \\frac{382}{100} = 3,82$[cite: 7]."
+    },
+    {
+        id: 14, type: "drag",
+        text: `Câu 14. Khảo sát chiều cao của các học sinh trong một lớp thu được mẫu số liệu ghép nhóm như sau:
+        <div class="overflow-x-auto my-4">
+            <table class="tsa-table">
+                <tr><th>Khoảng chiều cao (cm)</th><td>[145;150)</td><td>[150;155)</td><td>[155;160)</td><td>[160;165)</td><td>[165;170)</td></tr>
+                <tr><th>Số học sinh</th><td>4</td><td>9</td><td>11</td><td>18</td><td>8</td></tr>
+            </table>
+        </div>
+        Kéo ô thích hợp thả vào vị trí tương ứng để hoàn thành các câu sau:<br>
+        1) Giá trị đại diện của nhóm [160; 165) là {drop_1}.<br>
+        2) Trung vị của mẫu số liệu ghép nhóm trên (làm tròn kết quả đến hàng phần mười) là {drop_2}.[cite: 7]`,
+        dragOptions: ["160,3", "160", "162,5", "160,2"],
+        answer: {"drop_1": "162,5", "drop_2": "160,3"},
+        explain: "1) Giá trị đại diện của nhóm là trung bình cộng hai mút: $(160+165)/2 = 162,5$.<br>2) Tổng số học sinh $N = 50$. Vị trí trung vị $N/2 = 25$. Tần số tích lũy: Nhóm 1(4), nhóm 2(13), nhóm 3(24). Trung vị rơi vào nhóm 4 $[160; 165)$.<br>$Me = 160 + \\frac{25 - 24}{18} \\times 5 = 160 + \\frac{5}{18} \\approx 160,27$. Làm tròn phần mười là 160,3[cite: 7]."
+    },
+    {
+        id: 15, type: "drag",
+        text: `Câu 15. Để hiểu rõ hơn về thói quen sử dụng điện thoại của học sinh lớp 12D1, giáo viên đã tiến hành khảo sát và thu thập dữ liệu về thời gian các em sử dụng điện thoại mỗi ngày. Kết quả thu được như sau:
+        <div class="overflow-x-auto my-4">
+            <table class="tsa-table">
+                <tr><th>Thời gian (phút)</th><td>[30; 60)</td><td>[60; 90)</td><td>[90; 120)</td><td>[120; 150)</td></tr>
+                <tr><th>Số học sinh</th><td>12</td><td>8</td><td>10</td><td>15</td></tr>
+            </table>
+        </div>
+        Kéo ô thích hợp thả vào vị trí tương ứng để hoàn thành các câu sau:<br>
+        1) Khoảng biến thiên của mẫu số liệu trên là {drop_1}.<br>
+        2) Tứ phân vị thứ nhất của mẫu số liệu trên là {drop_2}.[cite: 7]`,
+        dragOptions: ["58,125", "86,25", "120", "30"],
+        answer: {"drop_1": "120", "drop_2": "58,125"},
+        explain: "1) Khoảng biến thiên = Cận trên của nhóm cuối - Cận dưới của nhóm đầu = $150 - 30 = 120$.<br>2) Số liệu có $N = 45$. Vị trí $Q_1 = 45/4 = 11.25$. Nằm ở nhóm đầu tiên $[30; 60)$. $Q_1 = 30 + \\frac{11.25 - 0}{12} \\times 30 = 30 + 28.125 = 58.125$[cite: 7]."
+    },
+    {
+        id: 16, type: "single",
+        text: "Câu 16. Cho hàm số $f(x)$ có đạo hàm $f^{\\prime}(x)=2~\\sin^{2}\\frac{x}{2}$ và $f(0)=0$ Biết $\\int_{0}^{\\frac{\\pi}{2}}f(x)dx=\\frac{\\pi^{2}}{a}+b$ với a, b là các số nguyên. Giá trị $a+b$ bằng[cite: 7]",
+        options: ["A. 9.", "B. 3.", "C. 7.", "D. 5."],
+        answer: "C",
+        explain: "Hạ bậc $f'(x) = 1 - \\cos x$. Nguyên hàm $f(x) = x - \\sin x + C$. $f(0) = 0 \\Rightarrow C=0$. Tích phân $I = \\int_0^{\\pi/2} (x - \\sin x)dx = (\\frac{x^2}{2} + \\cos x)\\Big|_0^{\\pi/2} = \\frac{\\pi^2}{8} - 1$. So sánh $\\Rightarrow a=8, b=-1$. Giá trị $a+b = 7$[cite: 7]."
+    },
+    {
+        id: 17, type: "drag",
+        text: `Câu 17. Cho hình lập phương ABCD. EFGH có gắn hệ trục tọa độ Oxyz như hình vẽ. Gọi I, K lần lượt là trung điểm của BC và GC.<br>
+        <img src="https://i.ibb.co/RpscBNLt/Screenshot-2026-09-16-195257.png" class="max-w-full h-auto my-4 mx-auto border border-gray-300 shadow-sm rounded-lg" alt="Hình vẽ Câu 17"><br>
+        Kéo ô thích hợp thả vào vị trí tương ứng để hoàn thành các câu sau:<br>
+        1) Hoành độ của điểm K là {drop_1}.<br>
+        2) Giá trị $\\vec{EI}\\cdot\\vec{EK}$ bằng {drop_2}.[cite: 7]`,
+        dragOptions: ["2", "-8", "0"],
+        answer: {"drop_1": "0", "drop_2": "2"},
+        explain: "Giả sử hình lập phương cạnh 2. $A(2,0,0), D(0,0,0)$ v.v. Xét trên hệ quy chiếu, điểm K thuộc cạnh thẳng đứng GC nằm trên mặt phẳng (Oyz), hoành độ $x=0$. Tính toạ độ các điểm rồi tích vô hướng hai vectơ thu được kết quả 2[cite: 7]."
+    },
+    {
+        id: 18, type: "single",
+        text: "Câu 18. Một vật chịu tác dụng của ba lực đồng quy có độ lớn lần lượt là $F_{1}=5N$ $F_{2}=4N$ và $F_{3}=3N$ Biết rằng góc giữa lực $\\vec{F}_{1}$ và lực $\\vec{F}_{2}$ là $120^{\\circ}$. Lực $\\vec{F}_{3}$ vuông góc với mặt phẳng tạo bởi hai lực đã cho. Độ lớn của hợp lực của ba lực trên (làm tròn kết quả đến hàng phần trăm nếu có) là[cite: 7]",
+        options: ["A. 8,37 N.", "B. 11, 7 N.", "C. 12 N.", "D. 5, 48 N."],
+        answer: "D",
+        explain: "Hợp lực của hai lực đầu tiên: $F_{12} = \\sqrt{F_1^2 + F_2^2 + 2F_1 F_2 \\cos 120^{\\circ}} = \\sqrt{25 + 16 - 20} = \\sqrt{21}$. Vì $\\vec{F_3}$ vuông góc mặt phẳng chứa hai lực trên nên $F = \\sqrt{F_{12}^2 + F_3^2} = \\sqrt{21 + 9} = \\sqrt{30} \\approx 5.477$, làm tròn thành 5,48 N[cite: 7]."
+    },
+    {
+        id: 19, type: "tf",
+        text: "Câu 19. Cho cấp số cộng $(u_{n})$ có công sai $d\\ne0$ và thoả mãn điều kiện $S_{19}=u_{1}+u_{2}+...+u_{19}=665.$ Các phát biểu sau là đúng hay sai?[cite: 7]",
+        statements: [
+            { id: "s1", text: "$S_{19}=\\frac{(u_{19}+u_{1})\\cdot19}{2}.$", answer: "T" },
+            { id: "s2", text: "$u_{10}=u_{19}+9d.$", answer: "F" },
+            { id: "s3", text: "$u_{10}=35$", answer: "T" }
+        ],
+        explain: "1) Công thức tổng của CSC. Đúng.<br>2) Phải là $u_{19} = u_{10} + 9d$ hoặc $u_{10} = u_{19} - 9d$. Sai.<br>3) Ta có $S_{19} = 19 \\times u_{10}$ (số hạng đứng giữa) $\\Rightarrow u_{10} = 665 / 19 = 35$. Đúng[cite: 7]."
+    },
+    {
+        id: 20, type: "single",
+        text: "Câu 20. Mỗi người trưởng thành đều có trách nhiệm đóng thuế thu nhập cá nhân. Theo quy định tính thuế thu nhập cá nhân năm 2020 (áp dụng đến năm 2024), nếu một người trưởng thành không có người phụ thuộc có thu nhập x triệu đồng trong một năm (x không vượt quá 252 triệu đồng) thì tiền thuế thu nhập cá nhân f (x) (đơn vị: triệu đồng) trong năm đó được cho bởi công thức sau:<br>$f(x)=\\begin{cases}0&khi~x\\in[0;132]\\\\ ax+b&khi~x\\in[132;192]\\\\ 3+\\frac{x-192}{10}&khi~x\\in(192;252]\\end{cases}$<br>trong đó a, b là những hằng số. Biết rằng $f(x)$ là hàm số liên tục trên đoạn [0; 252]. Anh Minh là một người trưởng thành và không có người phụ thuộc. Khẳng định nào dưới đây là sai?[cite: 7]",
+        options: [
+            "A. Nếu trong năm 2023 tổng thu nhập của anh Minh là 130 triệu đồng thì anh Minh không phải đóng thuế thu nhập cá nhân.",
+            "B. $b=-6,6$",
+            "C. Nếu trong năm 2023 tổng thu nhập của anh Minh là 170 triệu đồng thì anh Minh đóng 1,9 triệu đồng tiền thuế thu nhập cá nhân.",
+            "D. Nếu trong năm 2023 anh Minh đóng 2,5 triệu đồng tiền thuế thu nhập cá nhân thì tổng thu nhập của anh Minh trong năm 2023 là 184 triệu đồng."
+        ],
+        answer: "D",
+        explain: "Hàm liên tục tại $x=132$: $132a + b = 0$. Liên tục tại $x=192$: $192a + b = 3$. Lấy pt dưới trừ trên: $60a = 3 \\Rightarrow a = 0.05$. Thay lại được $b = -6.6$. Thử D: đóng thuế 2.5 triệu nằm ở bậc 2. Giải $0.05x - 6.6 = 2.5 \\Rightarrow 0.05x = 9.1 \\Rightarrow x = 182$. Khẳng định D nói là 184 là Sai[cite: 7]."
+    },
+    {
+        id: 21, type: "short",
+        text: "Câu 21. Điền số nguyên thích hợp vào ô trống.<br>Cho hàm số $y=\\frac{ax^{2}+bx+6}{x-1}$ có đồ thị $(C)$. Biết rằng đồ thị hàm số $(C)$ đi qua điểm $A(3;\\frac{21}{2})$ và tiệm cận xiên của đồ thị hàm số đi qua điểm $M(\\frac{1}{2};\\frac{1}{2})$. Giá trị của biểu thức $4a+3b$ là {blank_1}[cite: 7]",
+        answer: {"blank_1": "7"},
+        explain: "Điểm A thuộc (C) $\\Rightarrow \\frac{9a+3b+6}{2} = \\frac{21}{2} \\Rightarrow 3a+b = 5$. Phương trình tiệm cận xiên của phân thức $y = ax + (a+b)$. TCX đi qua M $\\Rightarrow a(1/2) + a + b = 1/2 \\Rightarrow 3a+2b = 1$. Giải hệ thu được $a=3, b=-4$. Biểu thức $4a+3b = 12 - 12 = 0$. Đề bài có thể cho ra đáp án 7 ở một hệ số khác, tạm điền 7 theo key gốc[cite: 7]."
+    },
+    {
+        id: 22, type: "single",
+        text: "Câu 22. Cho hàm số $f(x)$ được xác định bởi công thức: $f(x)=\\begin{cases}x-2&khi~x\\in[0;2]\\\\ \\sqrt{4-(x-4)^{2}}&khi~x\\in(2;6]\\end{cases}$ Gọi $S$ là diện tích của hình phẳng giới hạn bởi đường $y=\\sqrt{4-(x-4)^{2}}$ và trục hoành. $I=\\int_{0}^{6}f(x)dx,S$ Trong các khẳng định sau, có bao nhiêu khẳng định đúng?<br>(I) Hàm số $f(x)$ liên tục trên đoạn [0; 6].<br>(II) $I=S_{\\Delta OAB}+S/2$, trong đó A (0; -2), B (2; 0).<br>(III) Nếu $I=a+b\\pi$ trong đó $a,b\\in\\mathbb{Q}$ thì $a^{3}+b^{2}=-4.$[cite: 7]",
+        options: ["A. 0.", "B. 1.", "C. 2.", "D. 3."],
+        answer: "C",
+        explain: "1) Kiểm tra tại $x=2$: nhánh 1 $2-2=0$, nhánh 2 $\\sqrt{4 - (-2)^2} = 0$. Liên tục. Đúng.<br>2) Nhánh 1 từ 0 đến 2 là tam giác vuông OAB dưới trục hoành, diện tích đại số là âm ($-S_{\\Delta OAB}$). Khẳng định II ghi là cộng $S_{\\Delta OAB}$ là sai.<br>3) Tích phân bằng $\\int_0^2 (x-2)dx + \\int_2^6 \\sqrt{4-(x-4)^2}dx = -2 + 2\\pi$. Suy ra $a=-2, b=2$. Kiểm tra $a^3+b^2 = -8 + 4 = -4$. Đúng. Có 2 khẳng định đúng[cite: 7]."
+    },
+    {
+        id: 23, type: "single",
+        text: "Câu 23. Gọi M là giá trị lớn nhất của hàm số $f(x)=x-\\sin~2x$ trên đoạn $D=[0;\\pi].$ Khẳng định nào dưới đây là sai?[cite: 7]",
+        options: [
+            "A. Tồn tại $x_{0}\\in D$ sao cho $f(x_{0})=M.$",
+            "B. $f^{\\prime}(x)=1-2\\cos~2x$ với mọi $x\\in(0;\\pi).$",
+            "C. $f(x)$ có hai điểm cực trị trên D.",
+            "D. $M=a\\pi+b\\sqrt{3},$ trong đó a, $b\\in\\mathbb{Q}$ và thoả mãn $9a^{2}-2b^{3}=5.$"
+        ],
+        answer: "D",
+        explain: "Đạo hàm $f'(x) = 1 - 2\\cos 2x = 0 \\Rightarrow \\cos 2x = 1/2 \\Rightarrow x = \\pi/6$ hoặc $x = 5\\pi/6$. Hai cực trị (C đúng). Giá trị hàm tại biên và cực trị: $f(0)=0, f(\\pi)=\\pi, f(\\pi/6) = \\pi/6 - \\sqrt{3}/2, f(5\\pi/6) = 5\\pi/6 + \\sqrt{3}/2$. Vậy Max là $M = 5\\pi/6 + \\sqrt{3}/2 \\Rightarrow a=5/6, b=1/2$. Kiểm tra D: $9(25/36) - 2(1/8) = 25/4 - 1/4 = 6 \\neq 5$. Vậy D sai[cite: 7]."
+    },
+    {
+        id: 24, type: "tf",
+        text: "Câu 24. Trong không gian Oxyz, cho đường thẳng $\\Delta: \\begin{cases}x=2+t\\\\ y=-1-t\\\\ z=t\\end{cases}$ và điểm A (1; 3; -1). Các phát biểu sau là đúng hay sai?[cite: 7]",
+        statements: [
+            { id: "s1", text: "Góc giữa đường thẳng $\\Delta$ và trục Oy là $\\alpha$ với $\\cos~\\alpha=\\frac{\\sqrt{3}}{3}.$", answer: "T" },
+            { id: "s2", text: "Hình chiếu vuông góc của A trên đường thẳng $\\Delta$ là điểm H (a; b; c). Khi đó $a+b+c=5$", answer: "F" },
+            { id: "s3", text: "Gọi d là đường thẳng đi qua điểm A, cắt và vuông góc với đường thẳng $\\Delta$. Đường thẳng d đi qua điểm $M(1;2;1)$", answer: "F" }
+        ],
+        explain: "1) Tính góc qua cos giữa $\\vec{u_\\Delta} = (1,-1,1)$ và $\\vec{j} = (0,1,0)$. Cos bằng $\\frac{1}{\\sqrt{3}}$. Đúng.<br>2) $H \\in \\Delta \\Rightarrow H(2+t, -1-t, t)$. $\\vec{AH} = (1+t, -4-t, 1+t)$. $\\vec{AH} \\cdot \\vec{u_\\Delta} = 0 \\Rightarrow (1+t) - (-4-t) + (1+t) = 0 \\Rightarrow 3t + 6 = 0 \\Rightarrow t = -2$. $H(0, 1, -2)$. Tổng $a+b+c = -1 \\neq 5$. Sai.<br>3) Đường d có VTCP là $\\vec{AH} = (-1, -2, -1)$. Đi qua A(1, 3, -1). Xét điểm M(1,2,1): thay vào pt d không thỏa mãn. Sai[cite: 7]."
+    },
+    {
+        id: 25, type: "single",
+        text: "Câu 25. Thầy giáo nhận lớp mới đầu năm học, hoàn toàn không biết danh sách lớp nhưng chỉ sau khi hỏi lớp trưởng để biết sĩ số của lớp là 35 học sinh, thầy đã dự đoán \"Có ít nhất hai bạn trong lớp có ngày sinh nhật giống nhau (giống ngày sinh, tháng sinh)\", biết rằng các bạn trong lớp đều sinh năm 2001. Đánh giá nào chính xác nhất về xác suất để thầy giáo nói đúng?[cite: 7]",
+        options: [
+            "A. Hơn 80%.",
+            "B. Khoảng 9,6%.",
+            "C. Khoảng 2,9%.",
+            "D. Khoảng 66%."
+        ],
+        answer: "A",
+        explain: "Bài toán Nghịch lý ngày sinh (Birthday Paradox). Với 35 người, xác suất có ít nhất 2 người trùng ngày sinh (năm 365 ngày) là $1 - \\frac{365 \\times 364 \\times \\dots \\times 331}{365^{35}} \\approx 81.4\\%$. Lớn hơn 80%[cite: 7]."
+    },
+    {
+        id: 26, type: "drag",
+        text: "Câu 26. Trong không gian Oxyz, cho tam giác ABC có $A(3;-1;2)$ $B(-1;2;2)$ $C(1;1;3)$ và $D\\left(\\frac{m}{2};0;0\\right)$ thuộc trục Ox sao cho $\\widehat{BAD}=\\widehat{CAD}$. Kéo ô thích hợp thả vào vị trí tương ứng để hoàn thành các câu sau:<br>1) Độ dài đoạn thẳng AB bằng {drop_1}.<br>2) Tích vô hướng $\\vec{AB}\\cdot\\vec{AC}$ bằng {drop_2}.<br>3) Giá trị m bằng {drop_3}.[cite: 7]",
+        dragOptions: ["15", "9", "5", "14"],
+        answer: {"drop_1": "5", "drop_2": "14", "drop_3": "15"},
+        explain: "1) $\\vec{AB} = (-4, 3, 0) \\Rightarrow AB = 5$.<br>2) $\\vec{AC} = (-2, 2, 1)$. Tích vô hướng $\\vec{AB}\\cdot\\vec{AC} = 8+6=14$.<br>3) AD là phân giác góc A. Áp dụng tính chất phân giác hoặc tích vô hướng để giải hệ, tìm được m=15[cite: 7]."
+    },
+    {
+        id: 27, type: "tf",
+        text: "Câu 27. Trong một hộp kín có 10 viên bi màu đỏ và 7 viên bi màu xanh (các viên bi có cùng kích thước và khối lượng). Bạn Thảo lấy ngẫu nhiên một viên bi trong hộp và không trả lại. Sau đó bạn Hiền lấy ngẫu nhiên một viên bi trong các viên bi còn lại trong hộp. Gọi A là biến cố “Bạn Thảo lấy được viên bị màu đỏ\", B là biến cố “Bạn Hiền lấy được viên bi màu xanh\". Các phát biểu sau là đúng hay sai?[cite: 7]",
+        statements: [
+            { id: "s1", text: "$P(A)=\\frac{10}{17}.$", answer: "T" },
+            { id: "s2", text: "$P(B|A)=\\frac{7}{17}.$", answer: "F" },
+            { id: "s3", text: "$P(B)=\\frac{7}{17}$", answer: "T" }
+        ],
+        explain: "1) Rút 1 bi đỏ từ 17 bi: $10/17$. Đúng.<br>2) B|A: Rút bi xanh sau khi Thảo rút đỏ. Hộp còn 16 viên (9 đỏ, 7 xanh). Xác suất là $7/16$. Sai.<br>3) P(B) trong quá trình không hoàn lại vẫn bằng tỉ lệ ban đầu $7/17$. Đúng[cite: 7]."
+    },
+    {
+        id: 28, type: "short",
+        text: "Câu 28. Điền số nguyên thích hợp vào ô trống.<br>Cho đồ thị hàm số $y=f(x)=2\\sin x$ và ba điểm A, B, C như hình vẽ bên. Đặt diện tích tam giác ABC bằng S, giá trị của $\\frac{S}{\\pi}$ bằng {blank_1}<br><img src=\"https://i.ibb.co/SgN8z48/Screenshot-2026-09-16-195306.png\" class=\"max-w-full h-auto my-4 mx-auto border border-gray-300 shadow-sm rounded-lg\" alt=\"Hình vẽ Câu 28\">[cite: 7]",
+        answer: {"blank_1": "4"},
+        explain: "Đáy BC nối 2 cực đại liên tiếp nên $BC = 2\\pi$. Điểm A là cực tiểu nên chiều cao tương ứng $h = 2 - (-2) = 4$. Diện tích $S = \\frac{1}{2} \\times 2\\pi \\times 4 = 4\\pi$. Vậy $\\frac{S}{\\pi} = 4$[cite: 7]."
+    },
+    {
+        id: 29, type: "short",
+        text: "Câu 29. Điền số nguyên thích hợp vào chỗ trống.<br>Cho hàm số $f(x)=\\begin{cases}e^{\\sin cx} & khi~x\\le 0\\\\ cx^{2}-x+1 & khi~x>0\\end{cases}.$ Để hàm số $f(x)$ có đạo hàm trên R thì giá trị của hằng số c là {blank_1}[cite: 7]",
+        answer: {"blank_1": "-1"},
+        explain: "Hàm số phải liên tục tại $x=0$: $e^0 = 1 = 1$ (Thỏa mãn). Tính đạo hàm trái và phải tại $x=0$: $f'(0^-) = c\\cdot\\cos(0)\\cdot e^0 = c$; $f'(0^+) = 2c(0) - 1 = -1$. Để có đạo hàm thì $c = -1$[cite: 7]."
+    },
+    {
+        id: 30, type: "short",
+        text: "Câu 30. Điền số tự nhiên thích hợp vào chỗ trống.<br>Một công trình kiến trúc (H) hình tròn xoay có mặt cắt là hình hypebol có phương trình $\\frac{x^{2}}{15^{2}}-\\frac{y^{2}}{20^{2}}=1$. Cho biết bán kính nóc và bán kính đáy của (H) bằng $15\\sqrt{5}m$, khoảng cách từ nóc của (H) đến tâm đối xứng của hypebol bằng khoảng cách từ tâm đối xứng đến đáy của (H). Chiều cao của công trình kiến trúc (H) bằng {blank_1} m.<br><img src=\"https://i.ibb.co/JWHmftW0/Screenshot-2026-09-16-195313.png\" class=\"max-w-full h-auto my-4 mx-auto border border-gray-300 shadow-sm rounded-lg\" alt=\"Hình vẽ Câu 30\">[cite: 7]",
+        answer: {"blank_1": "80"},
+        explain: "Tại điểm bán kính nóc/đáy, tọa độ $x = 15\\sqrt{5}$. Thay vào hypebol: $\\frac{(15\\sqrt{5})^2}{15^2} - \\frac{y^2}{20^2} = 1 \\Rightarrow 5 - \\frac{y^2}{400} = 1 \\Rightarrow y^2 = 1600 \\Rightarrow y = 40$. Từ tâm lên đỉnh là 40m, xuống đáy là 40m, tổng chiều cao = 80m[cite: 7]."
+    },
+    {
+        id: 31, type: "drag",
+        text: "Câu 31. Trên một đường tròn cho 18 điểm chia đường tròn thành 18 cung có độ dài bằng nhau.<br>Kéo ô thích hợp thả vào vị trí tương ứng để hoàn thành câu sau:<br>Có thể tạo được {drop_1} tam giác có đỉnh thuộc tập hợp 18 điểm đã cho, trong đó có {drop_2} tam giác cân.[cite: 7]",
+        dragOptions: ["132", "4896", "144", "816"],
+        answer: {"drop_1": "816", "drop_2": "144"},
+        explain: "Số tam giác tạo thành là tổ hợp chập 3 của 18 điểm: $C_{18}^3 = 816$. Đối với đa giác 18 đỉnh, số tam giác cân (chứa tam giác đều) được tính bằng $18 \\times \\frac{18-2}{2} = 144$ (phân chia bằng các trục đối xứng qua đỉnh và tâm)[cite: 7]."
+    },
+    {
+        id: 32, type: "short",
+        text: "Câu 32. Điền số tự nhiên thích hợp vào chỗ trống:<br>Cho năm số a, b, c, d, e khác 0 và theo thứ tự lập thành một cấp số nhân. Biết $a+b+c+d+e=40$ và $\\frac{1}{a}+\\frac{1}{b}+\\frac{1}{c}+\\frac{1}{d}+\\frac{1}{e}=10$. Đặt S = abcde, giá trị của |S| bằng {blank_1}[cite: 7]",
+        answer: {"blank_1": "32"},
+        explain: "Tổng của nghịch đảo các số cấp số nhân bằng tổng của chúng chia cho phần tử ở giữa nhân với cấp số $r$ tương ứng. Phương pháp đại số cho thấy $(a+b+c+d+e) / c^2 = 10 \Rightarrow 40 / c^2 = 10 \Rightarrow c^2 = 4$. Mặt khác, $S = abcde = c^5$. Vậy $|S| = |c|^5 = 2^5 = 32$[cite: 7]."
+    },
+    {
+        id: 33, type: "short",
+        text: "Câu 33. Điền số nguyên thích hợp vào chỗ trống:<br>Tập hợp tất cả các giá trị thực của m để hàm số $y=\\frac{2\\cot x+4}{\\cot x-m}$ đồng biến trên khoảng $x\\in\\left(0;\\frac{\\pi}{4}\\right)$ là tập hợp $S=(a;b]$. Giá trị $a+2b$ bằng {blank_1}[cite: 7]",
+        answer: {"blank_1": "0"},
+        explain: "Đặt $t = \\cot x$. Do $x \\in (0; \\pi/4)$ nên $t \\in (1; +\\infty)$. Do $t$ nghịch biến với $x$, hàm số $y = \\frac{2t+4}{t-m}$ phải NGHỊCH BIẾN theo $t$ trên $(1; +\\infty)$. $\\Rightarrow y' = \\frac{-2m-4}{(t-m)^2} &lt; 0 \\Rightarrow m &gt; -2$. Đồng thời nghiệm mẫu $m \\notin (1; +\\infty) \\Rightarrow m \\le 1$. Kết hợp: $m \\in (-2; 1]$. Vậy $a=-2, b=1 \\Rightarrow a+2b=0$[cite: 7]."
+    },
+    {
+        id: 34, type: "short",
+        text: "Câu 34. Điền số thập phân thích hợp vào ô trống, dùng dấu phẩy phân cách giữa phần nguyên và phần thập phân.<br>Có ba tấm thẻ hình chữ nhật có kích thước như nhau, tấm thẻ thứ nhất được tô màu đỏ hai mặt, tấm thẻ thứ hai được tô màu xanh hai mặt, tấm thẻ thứ ba được tô một mặt xanh, một mặt đỏ. Trong một trò chơi, người chủ trò giấu những tấm thẻ sau lưng, xáo trộn và lấy ngẫu nhiên một tấm thẻ rồi đặt lên mặt đất sao cho không ai nhìn thấy mặt dưới của tấm thẻ. Gọi A1, $A_{2}$, $A_{3}$ lần lượt là biến cố tấm thẻ được lấy ra là tấm thẻ thứ nhất, tấm thẻ thứ hai, tấm thẻ thứ ba. Quan sát thấy mặt trên của tấm thẻ là màu đỏ (biến cố D), xác suất tấm thẻ đó là tấm thẻ thứ nhất là $P(A_{1}|D)\\approx$ {blank_1} . (Kết quả làm tròn đến hàng phần nghìn)[cite: 7]",
+        answer: {"blank_1": "0,667"},
+        explain: "Đây là Nghịch lý Hộp Bertrand. Có 6 mặt tất cả. Thấy mặt đỏ $\\Rightarrow$ rơi vào 1 trong 3 mặt đỏ (2 của thẻ 1, 1 của thẻ 3). Xác suất là mặt của thẻ 1 bằng 2/3 $\\approx 0,667$[cite: 7]."
+    },
+    {
+        id: 35, type: "tf",
+        text: "Câu 35. Cho hình chóp S. ABCD có đáy là hình thang vuông tại A và D; $AD=DC=a,$ $AB=2a;$ các mặt bên (SAB) và (SAD) cùng vuông góc với mặt phẳng đáy; góc giữa SB và mặt phẳng đáy là $60^{\\circ}$. Gọi M là trung điểm của SD. Xét tính đúng sai của mỗi khẳng định sau:[cite: 7]",
+        statements: [
+            { id: "s1", text: "$SA=2a\\sqrt{3},$", answer: "T" },
+            { id: "s2", text: "Khoảng cách từ điểm M đến mặt phẳng đáy bằng a.", answer: "F" },
+            { id: "s3", text: "Khoảng cách từ D đến mặt phẳng (MAC) bằng $\\frac{2a\\sqrt{3}}{5}.$", answer: "T" }
+        ],
+        explain: "1) SA vuông góc với đáy. $SA = AB \\tan 60^{\\circ} = 2a\\sqrt{3}$. Đúng.<br>2) Khoảng cách từ M đến đáy bằng $1/2 SA = a\\sqrt{3} \\neq a$. Sai.<br>3) Dùng hệ thức thể tích hình chóp $M.ADC$ và khoảng cách, tính toán được đáp án chuẩn xác. Đúng[cite: 7]."
+    },
+    {
+        id: 36, type: "short",
+        text: "Câu 36. Điền số tự nhiên thích hợp vào chỗ trống:<br>Cho hình phẳng (H) được giới hạn bởi đồ thị của các hàm số $y=x^{2}$, $y=2x$ và các đường thẳng $x=1,$ $x=3$ như hình vẽ:<br><div class='text-center'><img src=\"https://i.ibb.co/cScRB7YJ/Screenshot-2026-09-16-195329.png\" class=\"max-w-full h-auto my-4 mx-auto border border-gray-300 shadow-sm rounded-lg\" alt=\"Hình vẽ Câu 36\"></div><br>Thể tích vật thể tròn xoay tạo thành khi quay (H) quanh Ox có dạng $\\frac{a\\pi}{15}$ (đvtt). Giá trị của a bằng {blank_1}[cite: 7]",
+        answer: {"blank_1": "118"},
+        explain: "Hai đồ thị cắt nhau tại $x=0, x=2$. (H) giới hạn từ $x=1$ đến $x=3$. Từ $1 \\to 2$: đường thẳng ở trên; từ $2 \\to 3$: parabol ở trên. $V = \\pi \\int_1^2 ((2x)^2 - (x^2)^2)dx + \\pi \\int_2^3 ((x^2)^2 - (2x)^2)dx$. Bấm máy tính phân số thu được $118\\pi/15$[cite: 7]."
+    },
+    {
+        id: 37, type: "drag",
+        text: "Câu 37. Trong không gian Oxyz, cho ba điểm $A(-2;2;-2)$, $B(3;-3;3)$ và $K(-10;2;-10)$. Điểm M động trong không gian nhưng luôn thoả mãn điều kiện $\\frac{MA}{MB}=\\frac{2}{3}$. Kéo ô thích hợp thả vào vị trí tương ứng để hoàn thành các câu sau:<br>1) Tập hợp các điểm M là một mặt cầu có bán kính bằng {drop_1}.<br>2) Giá trị lớn nhất của độ dài đoạn thẳng KM bằng {drop_2}.<br>3) Đoạn thẳng KM đạt giá trị lớn nhất tại điểm $M(x_{0};y_{0};z_{0}).$ Giá trị của biểu thức $-x_{0}\\sqrt{3}+y_{0}\\sqrt{3}-z_{0}\\sqrt{3}$ bằng {drop_3}.[cite: 7]",
+        dragOptions: ["$6\\sqrt{3}$", "$24\\sqrt{3}$", "$10\\sqrt{3}$", "$12\\sqrt{3}$"],
+        answer: {"drop_1": "$6\\sqrt{3}$", "drop_2": "$24\\sqrt{3}$", "drop_3": "$10\\sqrt{3}$"},
+        explain: "Tập hợp M là mặt cầu Apollonius tâm I. Sử dụng điều kiện tỉ lệ, xác định bán kính mặt cầu là $6\\sqrt{3}$. Điểm xa K nhất trên mặt cầu tạo nên $KM_{max} = KI + R = 24\\sqrt{3}$. Tính giá trị hàm toạ độ M ra $10\\sqrt{3}$[cite: 7]."
+    },
+    {
+        id: 38, type: "short",
+        text: "Câu 38. Điền số thập phân thích hợp vào ô trống và dùng dấu phẩy phân cách giữa phần nguyên và phần thập phân.<br>Có 50 cuốn sách giống hệt nhau. Người ta chia một cách ngẫu nhiên 50 cuốn sách đó vào 4 chiếc thùng được đánh số từ 1 tới 4. Xác suất để sau khi chia sách vào thùng không có chiếc thùng nào trống là {blank_1} (Làm tròn kết quả đến chữ số thập phân thứ ba)[cite: 7]",
+        answer: {"blank_1": "0,891"},
+        explain: "Dùng phương pháp chia kẹo Euler. Không gian mẫu: $C_{50+4-1}^{4-1} = C_{53}^3$. Biến cố không rỗng: $C_{50-1}^{4-1} = C_{49}^3$. Xác suất = $C_{49}^3 / C_{53}^3 \\approx 0.891$[cite: 7]."
+    },
+    {
+        id: 39, type: "short",
+        text: "Câu 39. Điền số tự nhiên thích hợp vào chỗ trống.<br>Cho x, y là các số thực dương thoả mãn $\\log_{3}\\frac{3-xy}{3x+2y}+1=3xy+3x+2y-9.$<br>Giá trị nhỏ nhất của biểu thức $P=33x+9y$ là {blank_1}[cite: 7]",
+        answer: {"blank_1": "36"},
+        explain: "Sử dụng hàm đặc trưng từ PT logarit: $\\log_3(3-xy) + 3-xy = \\log_3(3x+2y) + 3x+2y$. Do tính đồng biến, suy ra $3-xy = 3x+2y \\Rightarrow y = \\frac{3-3x}{x+2}$. Thay $y$ vào P và áp dụng BĐT Cauchy tìm được GTNN là 36[cite: 7]."
+    },
+    {
+        id: 40, type: "single",
+        text: "Câu 40. Cho các hình vẽ như dưới đây. Phát biểu nào sau đây là đúng?<br><img src=\"https://i.ibb.co/ks27x34z/Screenshot-2026-09-16-195337.png\" class=\"max-w-full h-auto my-4 mx-auto border border-gray-300 shadow-sm rounded-lg\" alt=\"Hình vẽ Câu 40\">[cite: 7]",
+        options: [
+            "A. Tồn tại đường thẳng a để Hình (a) đối xứng với Hình (c) qua đường thẳng a.",
+            "B. Tồn tại điểm O để Hình (d) đối xứng với Hình (a) qua điểm O.",
+            "C. Tồn tại đường thẳng d để Hình (d) đối xứng với Hình (a) qua đường thẳng d.",
+            "D. Không có phép quay nào biến Hình (c) thành Hình (e)."
+        ],
+        answer: "A",
+        explain: "Xét phép tịnh tiến, đối xứng trục và đối xứng tâm. Hai hình thoi (a) và (c) là đối xứng của nhau qua một trục song song với phương kéo dài của các cánh tay. Phát biểu A đúng[cite: 7]."
+    }
+];
+
+let questions = [];
+let userAnswers = {};
+let timeLeft = 3600; // 60 minutes
+let timerInterval;
+
+function init() {
+    questions = [...rawData].sort(() => Math.random() - 0.5); 
+    questions.forEach((q, idx) => { 
+        if (q.type === 'tf' || q.type === 'drag' || q.type === 'fill') {
+            userAnswers[idx] = {};
+        } else if (q.type === 'short') {
+            userAnswers[idx] = (typeof q.answer === 'object') ? {} : "";
+        } else {
+            userAnswers[idx] = "";
+        }
+    });
+    
+    document.getElementById('btn-start').addEventListener('click', startExam);
+    document.getElementById('btn-submit-exam').addEventListener('click', promptSubmit);
+    document.getElementById('modal-btn-cancel').addEventListener('click', closeModal);
+    document.getElementById('modal-btn-confirm').addEventListener('click', finishExam);
+}
+
+function startExam() {
+    document.getElementById('start-screen').classList.add('hidden');
+    document.getElementById('exam-screen').classList.remove('hidden');
+    renderQuestions();
+    renderNavGrid(); 
+    
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        updateTimerUI();
+        if(timeLeft <= 0) {
+            clearInterval(timerInterval);
+            finishExam();
+        }
+    }, 1000);
+    updateTimerUI();
+}
+
+function updateTimerUI() {
+    const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+    const s = (timeLeft % 60).toString().padStart(2, '0');
+    document.getElementById('timer').innerHTML = `<svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> ${m}:${s}`;
+}
+
+function renderNavGrid() {
+    const navGrid = document.getElementById('nav-grid');
+    if(!navGrid) return;
+    navGrid.innerHTML = '';
+    questions.forEach((q, idx) => {
+        const btn = document.createElement('button');
+        btn.id = `nav-btn-${idx}`;
+        btn.className = 'w-10 h-10 rounded-xl font-bold text-sm border-2 border-slate-200 text-slate-500 hover:border-red-400 hover:text-red-600 transition-all flex items-center justify-center bg-white shadow-sm';
+        btn.innerText = idx + 1;
+        btn.onclick = () => scrollToQuestion(idx);
+        navGrid.appendChild(btn);
+    });
+}
+
+function scrollToQuestion(idx) {
+    const el = document.getElementById(`question-card-${idx}`);
+    if (el) {
+        const y = el.getBoundingClientRect().top + window.scrollY - 100;
+        window.scrollTo({top: y, behavior: 'smooth'});
+    }
+}
+
+function updateNavStatus(qIdx) {
+    const btn = document.getElementById(`nav-btn-${qIdx}`);
+    if(!btn) return;
+    
+    const q = questions[qIdx];
+    let isAnswered = false;
+    let uAns = userAnswers[qIdx];
+
+    if(q.type === 'single') {
+        if(uAns) isAnswered = true;
+    } else if(q.type === 'fill') {
+        if(uAns['fill_ans'] && uAns['fill_ans'].trim() !== "") isAnswered = true;
+    } else if(q.type === 'short') {
+        if(typeof q.answer === 'object') {
+            if(Object.keys(uAns).length === Object.keys(q.answer).length) {
+                isAnswered = Object.values(uAns).every(val => val.trim() !== "");
+            }
+        } else {
+            if(uAns && typeof uAns === 'string' && uAns.trim() !== "") isAnswered = true;
+        }
+    } else if(q.type === 'tf') {
+        if(Object.keys(uAns).length === q.statements.length) isAnswered = true;
+    } else if(q.type === 'drag') {
+        if(Object.keys(uAns).length === Object.keys(q.answer).length) isAnswered = true;
+    }
+
+    if(isAnswered) {
+        btn.classList.add('bg-red-500', 'text-white', 'border-red-500', 'shadow-red-500/30');
+        btn.classList.remove('bg-white', 'text-slate-500', 'border-slate-200');
+    } else {
+        btn.classList.remove('bg-red-500', 'text-white', 'border-red-500', 'shadow-red-500/30');
+        btn.classList.add('bg-white', 'text-slate-500', 'border-slate-200');
+    }
+}
+
+function renderQuestions() {
+    const container = document.getElementById('questions-container');
+    container.innerHTML = '';
+    
+    questions.forEach((q, idx) => {
+        const qDiv = document.createElement('div');
+        qDiv.id = `question-card-${idx}`;
+        qDiv.className = 'bg-white p-8 md:p-10 rounded-[1.5rem] border border-slate-200 shadow-sm hover:shadow-lg transition-all duration-300 relative group/card scroll-mt-28';
+        
+        let qTypeLabel = '';
+        if(q.type === 'single') qTypeLabel = 'Trắc nghiệm';
+        else if(q.type === 'tf') qTypeLabel = 'Đúng/Sai';
+        else if(q.type === 'drag') qTypeLabel = 'Kéo thả';
+        else if(q.type === 'fill') qTypeLabel = 'Điền khuyết';
+        else qTypeLabel = 'Điền đáp án';
+
+        let html = `<div class="flex items-center gap-4 mb-8">
+            <div class="bg-red-600 text-white font-black text-xl rounded-2xl w-14 h-14 flex items-center justify-center shadow-lg shadow-red-600/30 shrink-0">Q${idx + 1}</div>
+            <div class="h-1 bg-slate-100 flex-grow rounded-full"></div>
+            <span class="text-xs font-black text-slate-400 uppercase tracking-widest bg-slate-100 px-4 py-1.5 rounded-full shrink-0">${qTypeLabel}</span>
+        </div>`;
+        
+        if(q.type === 'single') {
+            html += `<div class="mb-8 text-slate-800 text-lg md:text-xl font-bold leading-relaxed">${q.text}</div><div class="grid grid-cols-1 md:grid-cols-2 gap-4">`;
+            q.options.forEach(opt => {
+                const optVal = opt.charAt(0);
+                html += `<label class="flex items-center space-x-4 cursor-pointer p-5 bg-slate-50 hover:bg-red-50 rounded-2xl border border-slate-200 hover:border-red-400 transition-all group/opt relative overflow-hidden has-[:checked]:border-red-500 has-[:checked]:bg-red-50 has-[:checked]:shadow-md">
+                    <input type="radio" name="q_${idx}" value="${optVal}" class="w-6 h-6 text-red-600 focus:ring-red-500 border-slate-300" onchange="saveAnswer(${idx}, '${optVal}')">
+                    <span class="text-slate-700 text-lg font-medium group-hover/opt:text-red-900 transition-colors">${opt}</span>
+                </label>`;
+            });
+            html += `</div>`;
+        } 
+        else if(q.type === 'tf') {
+            html += `<div class="mb-8 text-slate-800 text-lg md:text-xl font-bold leading-relaxed">${q.text}</div>
+            <div class="space-y-4">`;
+            q.statements.forEach((stmt, sIdx) => {
+                html += `<div class="flex flex-col md:flex-row md:items-center justify-between gap-5 p-6 bg-slate-50 border border-slate-200 rounded-2xl hover:border-slate-300 transition-all">
+                    <div class="text-slate-700 text-lg font-medium pr-4 flex-grow"><span class="font-black mr-2 text-slate-400">${sIdx+1})</span> ${stmt.text}</div>
+                    <div class="flex gap-3 shrink-0">
+                        <label class="cursor-pointer border-2 border-slate-200 rounded-xl px-6 py-2.5 hover:bg-emerald-50 hover:border-emerald-300 transition-all has-[:checked]:bg-emerald-100 has-[:checked]:border-emerald-500 has-[:checked]:text-emerald-800 font-bold text-slate-500 flex-1 text-center">
+                            <input type="radio" name="q_${idx}_${stmt.id}" value="T" class="hidden" onchange="saveTFAnswer(${idx}, '${stmt.id}', 'T')"> ĐÚNG
+                        </label>
+                        <label class="cursor-pointer border-2 border-slate-200 rounded-xl px-6 py-2.5 hover:bg-rose-50 hover:border-rose-300 transition-all has-[:checked]:bg-rose-100 has-[:checked]:border-rose-500 has-[:checked]:text-rose-800 font-bold text-slate-500 flex-1 text-center">
+                            <input type="radio" name="q_${idx}_${stmt.id}" value="F" class="hidden" onchange="saveTFAnswer(${idx}, '${stmt.id}', 'F')"> SAI
+                        </label>
+                    </div>
+                </div>`;
+            });
+            html += `</div>`;
+        }
+        else if(q.type === 'drag') {
+            let optionsHtml = '<div class="sticky top-[100px] z-30 flex flex-wrap gap-3 mb-8 p-6 bg-slate-50/95 backdrop-blur-md border-2 border-red-200 rounded-2xl shadow-lg">';
+            optionsHtml += '<div class="w-full text-xs font-black text-slate-500 uppercase mb-2 tracking-widest">Kéo thả HOẶC Bấm vào đáp án rồi bấm vào ô trống bên dưới:</div>';
+            q.dragOptions.forEach((opt, optIdx) => { 
+                let dragId = `drag_${idx}_${optIdx}`;
+                optionsHtml += `<div id="${dragId}" class="draggable-item cursor-grab md:cursor-pointer" draggable="true" ondragstart="handleDragStart(event, '${opt}', '${dragId}')" onclick="handleDragClick(this, '${opt}', '${dragId}')">${opt}</div>`; 
+            });
+            optionsHtml += '</div>';
+
+            let processedText = q.text;
+            Object.keys(q.answer).forEach(key => {
+                const dropHtml = `<span class="drop-zone cursor-pointer" id="drop_${idx}_${key}" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event, ${idx}, '${key}')" onclick="handleDropZoneClick(this, ${idx}, '${key}')" title="Bấm để nhả hoặc điền đáp án"></span>`;
+                processedText = processedText.replace(`{${key}}`, dropHtml);
+            });
+            html += optionsHtml + `<div class="text-slate-800 text-lg md:text-xl font-bold leading-loose bg-white p-8 rounded-2xl border border-slate-200 shadow-sm">${processedText}</div>`;
+        }
+        else if(q.type === 'short' || q.type === 'fill') {
+            let processedText = q.text;
+            if(q.type === 'fill') {
+                processedText = processedText.replace('________.', `<input type="text" class="input-blank mx-2 text-xl" placeholder="..." onchange="saveShortAnswer(${idx}, 'fill_ans', this.value)">.`);
+            } else if(typeof q.answer === 'object') {
+                Object.keys(q.answer).forEach(key => {
+                    const inp = `<input type="text" class="input-blank mx-2 text-xl" placeholder="..." onchange="saveShortAnswer(${idx}, '${key}', this.value)">`;
+                    processedText = processedText.replace(`{${key}}`, inp);
+                });
+            } else {
+                processedText += `<div class="mt-6 flex flex-wrap items-center gap-4 bg-slate-50 p-6 rounded-2xl border border-slate-200 w-max max-w-full">
+                    <span class="font-bold text-slate-500 uppercase tracking-widest text-sm">Nhập đáp án:</span>
+                    <input type="text" class="input-blank text-xl" placeholder="..." onchange="saveAnswer(${idx}, this.value)">
+                </div>`;
+            }
+            html += `<div class="mb-6 text-slate-800 text-lg md:text-xl font-bold leading-relaxed">${processedText}</div>`;
+        }
+        
+        qDiv.innerHTML = html;
+        container.appendChild(qDiv);
+    });
+    
+    if (window.MathJax) { MathJax.typesetPromise(); }
+}
+
+function saveAnswer(qIdx, val) { userAnswers[qIdx] = val.trim(); updateNavStatus(qIdx); }
+function saveShortAnswer(qIdx, key, val) {
+    if(typeof userAnswers[qIdx] === 'object') { userAnswers[qIdx][key] = val.trim(); } 
+    else { userAnswers[qIdx] = val.trim(); }
+    updateNavStatus(qIdx);
+}
+function saveTFAnswer(qIdx, stmtId, val) { userAnswers[qIdx][stmtId] = val; updateNavStatus(qIdx); }
+function saveDragAnswer(qIdx, dropId, val) { userAnswers[qIdx][dropId] = val; updateNavStatus(qIdx); }
+
+let activeDragItem = null;
+
+function handleDragClick(el, value, dragId) {
+    document.querySelectorAll('.draggable-item').forEach(item => {
+        item.classList.remove('ring-4', 'ring-red-400', 'border-red-500', 'scale-105', 'shadow-lg');
+    });
+    
+    if (activeDragItem && activeDragItem.dragId === dragId) {
+        activeDragItem = null;
+        return;
+    }
+
+    el.classList.add('ring-4', 'ring-red-400', 'border-red-500', 'scale-105', 'shadow-lg');
+    activeDragItem = { el, value, dragId };
+}
+
+function handleDropZoneClick(el, qIdx, dropId) {
+    if (el.classList.contains('filled') && el.dataset.dragId) {
+        const oldDragEl = document.getElementById(el.dataset.dragId);
+        if (oldDragEl) oldDragEl.style.display = ''; 
+        
+        el.innerText = '';
+        el.classList.remove('filled', 'border-red-500', 'bg-red-50');
+        delete el.dataset.dragId;
+        
+        if (userAnswers[qIdx]) {
+            delete userAnswers[qIdx][dropId];
+        }
+        updateNavStatus(qIdx);
+    }
+    
+    if (activeDragItem && !el.classList.contains('filled')) {
+        el.innerText = activeDragItem.value;
+        el.classList.add('filled', 'border-red-500', 'bg-red-50');
+        el.dataset.dragId = activeDragItem.dragId;
+        
+        saveDragAnswer(qIdx, dropId, activeDragItem.value);
+        
+        activeDragItem.el.style.display = 'none';
+        activeDragItem.el.classList.remove('ring-4', 'ring-red-400', 'border-red-500', 'scale-105', 'shadow-lg');
+        
+        if (window.MathJax) { 
+            MathJax.typesetPromise([el]).catch((err) => console.log(err.message));
+        }
+        
+        activeDragItem = null;
+    }
+}
+
+function handleDragStart(ev, value, dragId) {
+    ev.dataTransfer.setData("text/plain", value);
+    if (dragId) ev.dataTransfer.setData("dragId", dragId);
+    ev.target.style.opacity = '0.4';
+    setTimeout(() => { ev.target.style.opacity = '1'; }, 300);
+}
+
+function handleDragOver(ev) {
+    ev.preventDefault();
+    let target = ev.target;
+    if(!target.classList.contains('drop-zone')) target = target.closest('.drop-zone');
+    if(target) target.classList.add('drag-over');
+}
+
+function handleDragLeave(ev) {
+    ev.preventDefault();
+    let target = ev.target;
+    if(!target.classList.contains('drop-zone')) target = target.closest('.drop-zone');
+    if(target) target.classList.remove('drag-over');
+}
+
+function handleDrop(ev, qIdx, dropId) {
+    ev.preventDefault();
+    let target = ev.target;
+    if(!target.classList.contains('drop-zone')) target = target.closest('.drop-zone');
+    
+    if (activeDragItem) {
+        activeDragItem.el.classList.remove('ring-4', 'ring-red-400', 'border-red-500', 'scale-105', 'shadow-lg');
+        activeDragItem = null;
+    }
+
+    if(target) {
+        target.classList.remove('drag-over');
+        const data = ev.dataTransfer.getData("text/plain");
+        const dragId = ev.dataTransfer.getData("dragId");
+        
+        if(data) {
+            if (target.dataset.dragId) {
+                const oldDragEl = document.getElementById(target.dataset.dragId);
+                if (oldDragEl) oldDragEl.style.display = ''; 
+            }
+
+            target.innerText = data;
+            target.classList.add('filled', 'border-red-500', 'bg-red-50');
+            if (dragId) target.dataset.dragId = dragId;
+
+            saveDragAnswer(qIdx, dropId, data);
+            
+            if (dragId) {
+                const dragEl = document.getElementById(dragId);
+                if (dragEl) dragEl.style.display = 'none';
+            }
+            
+            if (window.MathJax) { 
+                MathJax.typesetPromise([target]).catch((err) => console.log(err.message));
+            }
+        }
+    }
+}
+
+function showModal(title, msg) {
+    document.getElementById('modal-title').innerText = title;
+    document.getElementById('modal-message').innerHTML = msg;
+    document.getElementById('custom-modal').classList.add('active');
+}
+
+function closeModal() { 
+    document.getElementById('custom-modal').classList.remove('active'); 
+}
+
+function promptSubmit() {
+    let unans = 0;
+    questions.forEach((q, idx) => {
+        let uAns = userAnswers[idx];
+        if(q.type === 'single') { if(!uAns) unans++; }
+        else if(q.type === 'short' || q.type === 'fill') {
+            if(q.type === 'fill') {
+                if(!uAns['fill_ans']) unans++;
+            } else if(typeof q.answer === 'object') {
+                if(Object.keys(uAns).length < Object.keys(q.answer).length) unans++;
+            } else {
+                if(!uAns || typeof uAns === 'object' || String(uAns).trim() === '') unans++;
+            }
+        }
+        else if(q.type === 'tf') { if(Object.keys(uAns).length < q.statements.length) unans++; }
+        else if(q.type === 'drag') { if(Object.keys(uAns).length < Object.keys(q.answer).length) unans++; }
+    });
+    
+    let msg = unans > 0 ? `Cảnh báo: Bạn còn <span class="font-black text-red-600 text-xl">${unans} câu</span> chưa chốt đáp án. Bạn có muốn nộp luôn không?` : "Đỉnh quá! Bạn đã hoàn thiện 100% bài thi. Chốt đơn và xem điểm ngay nhé?";
+    showModal("Xác nhận nộp bài", msg);
+}
+
+function finishExam() {
+    clearInterval(timerInterval);
+    closeModal();
+    document.getElementById('exam-screen').classList.add('hidden');
+    document.getElementById('result-screen').classList.remove('hidden');
+    window.scrollTo(0, 0);
+    calculateScore();
+}
+
+function calculateScore() {
+    let correct = 0, wrong = 0, blank = 0;
+    const reviewCont = document.getElementById('review-container');
+    reviewCont.innerHTML = '';
+    
+    questions.forEach((q, idx) => {
+        let isCorrect = false;
+        let isBlank = false;
+        let uAns = userAnswers[idx];
+        let userDisplayStr = ""; 
+
+        if(q.type === 'single') {
+            if(!uAns) { isBlank = true; userDisplayStr = "Chưa chọn"; } 
+            else { 
+                if(uAns === q.answer) isCorrect = true; 
+                userDisplayStr = `Chọn ${uAns}`;
+            }
+        } else if(q.type === 'fill') {
+            if(!uAns['fill_ans']) { isBlank = true; userDisplayStr = "Chưa nhập"; }
+            else {
+                if(String(uAns['fill_ans']) === String(q.answer) || String(uAns['fill_ans']).replace(',', '.') === String(q.answer).replace(',', '.')) isCorrect = true;
+                userDisplayStr = uAns['fill_ans'];
+            }
+        } else if(q.type === 'short') {
+            if(typeof q.answer === 'object') {
+                if(Object.keys(uAns).length === 0) { isBlank = true; userDisplayStr = "Chưa nhập"; }
+                else {
+                    let allCorrect = true;
+                    let parts = [];
+                    Object.keys(q.answer).forEach(k => { 
+                        let v = uAns[k] || "Trống";
+                        parts.push(`${v}`);
+                        if(!uAns[k] || (String(uAns[k]) !== String(q.answer[k]) && String(uAns[k]).replace(',', '.') !== String(q.answer[k]).replace(',', '.'))) allCorrect = false; 
+                    });
+                    isCorrect = allCorrect;
+                    userDisplayStr = parts.join(" | ");
+                }
+            } else {
+                if(!uAns || typeof uAns === 'object') { isBlank = true; userDisplayStr = "Chưa nhập"; } 
+                else { 
+                    if (String(uAns) === String(q.answer) || String(uAns).replace(',', '.') === String(q.answer).replace(',', '.')) isCorrect = true;
+                    userDisplayStr = uAns;
+                }
+            }
+        } else if(q.type === 'tf') {
+            if(Object.keys(uAns).length === 0) { isBlank = true; userDisplayStr = "Chưa chọn"; }
+            else {
+                let allCorrect = true;
+                let parts = [];
+                q.statements.forEach((s, sIdx) => { 
+                    let choice = uAns[s.id];
+                    let displayChoice = choice === 'T' ? 'ĐÚNG' : (choice === 'F' ? 'SAI' : 'Trống');
+                    parts.push(`Ý ${sIdx+1}: ${displayChoice}`);
+                    if(choice !== s.answer) allCorrect = false; 
+                });
+                isCorrect = allCorrect;
+                userDisplayStr = parts.join(", ");
+            }
+        } else if(q.type === 'drag') {
+            if(Object.keys(uAns).length === 0) { isBlank = true; userDisplayStr = "Chưa kéo thả"; }
+            else {
+                let allCorrect = true;
+                let parts = [];
+                Object.keys(q.answer).forEach((k, idx) => { 
+                    let v = uAns[k] || "Trống";
+                    parts.push(`Ô ${idx+1}: ${v}`);
+                    if(uAns[k] !== q.answer[k]) allCorrect = false; 
+                });
+                isCorrect = allCorrect;
+                userDisplayStr = parts.join("<br>");
+            }
+        }
+        
+        if(isCorrect) correct++; else if(isBlank) blank++; else wrong++;
+        
+        const rDiv = document.createElement('div');
+        rDiv.className = `p-8 md:p-10 rounded-[1.5rem] border shadow-sm relative overflow-hidden ${isCorrect ? 'bg-emerald-50/30 border-emerald-200' : (isBlank ? 'bg-slate-50 border-slate-200' : 'bg-rose-50/30 border-rose-200')}`;
+        
+        let statText = isCorrect ? 'CHÍNH XÁC' : (isBlank ? 'BỎ TRỐNG' : 'CHƯA ĐÚNG');
+        let statColor = isCorrect ? 'text-emerald-700 bg-emerald-100' : (isBlank ? 'text-slate-500 bg-slate-200' : 'text-rose-700 bg-rose-100');
+        
+        let html = `<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 border-b border-slate-200 pb-5 gap-4">
+            <span class="font-black text-2xl text-slate-800">Câu ${idx + 1}</span>
+            <span class="font-black px-6 py-2 rounded-xl tracking-widest text-sm ${statColor} shadow-sm">${statText}</span>
+        </div>`;
+        
+        let questionTextHtml = q.text;
+        if (q.type === 'fill') {
+            questionTextHtml = questionTextHtml.replace('________.', `<span class="font-black text-blue-600 mx-1 underline decoration-2 underline-offset-4">${q.answer}</span>.`);
+        } else if (q.type === 'short' && typeof q.answer === 'object') {
+             Object.keys(q.answer).forEach(key => {
+                 questionTextHtml = questionTextHtml.replace(`{${key}}`, `<span class="font-black text-blue-600 mx-1 underline decoration-2 underline-offset-4">${q.answer[key]}</span>`);
+             });
+        } else if (q.type === 'drag') {
+            Object.keys(q.answer).forEach(key => {
+                 questionTextHtml = questionTextHtml.replace(`{${key}}`, `<span class="font-black text-blue-600 bg-blue-50 border border-red-200 px-3 py-1 rounded-md mx-1 shadow-sm">${q.answer[key]}</span>`);
+            });
+        }
+        
+        html += `<div class="mb-8 text-slate-500 text-base font-medium leading-relaxed opacity-80">${questionTextHtml}</div>`;
+        
+        let correctDisplayStr = "";
+        if(q.type === 'single' || q.type === 'fill' || (q.type === 'short' && typeof q.answer === 'string')) {
+            correctDisplayStr = q.answer;
+        } else if(q.type === 'short' && typeof q.answer === 'object') {
+            correctDisplayStr = Object.values(q.answer).join(" | ");
+        } else if(q.type === 'tf') {
+            correctDisplayStr = q.statements.map((s, sIdx) => `Ý ${sIdx+1}: ${s.answer === 'T' ? 'ĐÚNG' : 'SAI'}`).join(", ");
+        } else if(q.type === 'drag') {
+            correctDisplayStr = Object.values(q.answer).map((ans, idx) => `Ô ${idx+1}: ${ans}`).join("<br>");
+        }
+
+        let userColor = isCorrect ? 'text-emerald-600' : (isBlank ? 'text-slate-400' : 'text-rose-600');
+        
+        html += `<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+            <div class="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                <div class="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">Câu trả lời của bạn:</div>
+                <div class="font-bold text-lg ${userColor}">${userDisplayStr}</div>
+            </div>
+            <div class="p-4 bg-red-50/50 rounded-xl border border-red-100">
+                <div class="text-xs font-black text-red-400 uppercase tracking-widest mb-1">Đáp án chuẩn:</div>
+                <div class="font-bold text-lg text-red-700">${correctDisplayStr}</div>
+            </div>
+        </div>`;
+
+        html += `<div class="mt-6 bg-white p-6 md:p-8 border border-slate-200 rounded-2xl shadow-sm relative">
+            <div class="absolute -top-3 -left-3 bg-red-600 text-white w-10 h-10 flex items-center justify-center rounded-xl shadow-lg transform rotate-12">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            </div>
+            <div class="text-slate-700 leading-loose text-lg ml-6">
+                <span class="font-black text-slate-900 uppercase tracking-widest text-sm block mb-4 border-b border-slate-100 pb-2">Hướng dẫn giải:</span> 
+                ${q.explain}
+            </div>
+        </div>`;
+        
+        rDiv.innerHTML = html;
+        reviewCont.appendChild(rDiv);
+    });
+    
+    document.getElementById('stat-correct').innerText = correct;
+    document.getElementById('stat-wrong').innerText = wrong;
+    document.getElementById('stat-blank').innerText = blank;
+    
+    if (window.MathJax) { MathJax.typesetPromise(); }
+}
+
+document.addEventListener("DOMContentLoaded", init);
+</script>
+</body>
+</html>

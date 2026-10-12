@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Thống Luyện Đề - M</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Serif cho tiêu đề (Lora) + Sans cho nội dung (Be Vietnam Pro) - cả hai hỗ trợ tốt tiếng Việt -->
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;0,700;1,500&family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root{
+            --ink:#16213A;
+            --paper:#FBF8F2;
+            --paper-2:#F3EEE1;
+            --rule:#D9D0BA;
+            --wine:#7A2E38;
+            --wine-soft:#F3E7E5;
+            --steel:#1F4E5F;
+            --steel-soft:#E7EEEC;
+            --gold:#AD8A48;
+            --muted:#5B6472;
+        }
+        body{
+            font-family:'Be Vietnam Pro', sans-serif;
+            color:var(--ink);
+        }
+        .font-display{ font-family:'Lora', serif; }
+
+        .bg-scene{
+            background-image:
+                linear-gradient(rgba(16,24,42,0.82), rgba(16,24,42,0.93)),
+                url('https://i.ibb.co/CpBrfkk9/Screenshot-2026-09-16-225502.png');
+        }
+
+        /* Con dấu / huy hiệu chữ M */
+        .seal{
+            width:5.5rem; height:5.5rem;
+            border-radius:9999px;
+            background:var(--paper);
+            border:1px solid var(--gold);
+            box-shadow:0 0 0 4px var(--paper), 0 0 0 5px rgba(173,138,72,0.55);
+            display:flex; align-items:center; justify-content:center;
+        }
+        .seal span{
+            font-family:'Lora', serif;
+            font-weight:700;
+            font-size:2.1rem;
+            color:var(--ink);
+        }
+
+        .paper-card{
+            background:var(--paper);
+            border:1px solid var(--rule);
+            border-radius:6px;
+            box-shadow:0 24px 48px -20px rgba(10,15,30,0.55);
+        }
+
+        .exam-input{
+            width:100%;
+            background:transparent;
+            border:none;
+            border-bottom:1.5px solid var(--rule);
+            padding:0.85rem 0.25rem;
+            text-align:center;
+            font-weight:600;
+            letter-spacing:0.35em;
+            font-size:1.05rem;
+            color:var(--ink);
+            transition:border-color .2s ease;
+        }
+        .exam-input:focus{ outline:none; border-bottom-color:var(--gold); }
+        .exam-input::placeholder{ letter-spacing:0.05em; color:#9CA3AF; font-weight:500; }
+
+        .btn-primary{
+            background:var(--ink);
+            color:var(--paper);
+            font-weight:600;
+            letter-spacing:0.02em;
+            border-radius:4px;
+            padding:0.85rem 1.5rem;
+            transition:background .2s ease;
+        }
+        .btn-primary:hover{ background:#0B1428; }
+
+        .panel{
+            background:var(--paper);
+            border:1px solid var(--rule);
+            border-radius:6px;
+        }
+        .panel-head{
+            border-bottom:1px solid var(--rule);
+            padding:1.5rem 1.75rem 1.1rem 1.75rem;
+        }
+        .row-list a{
+            border-bottom:1px solid var(--rule);
+        }
+        .row-list a:last-child{ border-bottom:none; }
+
+        .num{
+            font-family:'Lora', serif;
+            font-style:italic;
+            font-weight:600;
+            font-size:1.15rem;
+        }
+
+        .tsa-accent{ color:var(--wine); }
+        .hsa-accent{ color:var(--steel); }
+        .tsa-num-badge{ background:var(--wine-soft); color:var(--wine); }
+        .hsa-num-badge{ background:var(--steel-soft); color:var(--steel); }
+    </style>
+</head>
+<body class="min-h-screen p-6 md:p-12 selection:bg-amber-100 bg-cover bg-center bg-fixed bg-no-repeat bg-scene">
+
+    <!-- ================= MÀN HÌNH KHÓA ================= -->
+    <div id="lock-screen-wrapper" class="flex items-center justify-center min-h-[80vh]">
+        <div class="max-w-md w-full paper-card p-8 md:p-10 text-center">
+            <div class="seal mx-auto mb-6">
+                <span>M</span>
+            </div>
+
+            <h1 class="font-display text-2xl text-[var(--ink)] mb-2">Khu vực bảo mật</h1>
+            <p class="text-[var(--muted)] mb-8 text-sm">Nhập mật khẩu để vào hệ thống luyện đề.</p>
+
+            <form onsubmit="checkPassword(event)" class="flex flex-col gap-5">
+                <input type="password" id="password-box" placeholder="• • • • • • • •" class="exam-input" required>
+                <button type="submit" class="btn-primary">Mở khóa</button>
+                <p id="error-msg" class="text-[var(--wine)] text-sm font-medium -mt-1 hidden">Mật khẩu không chính xác. Vui lòng thử lại.</p>
+            </form>
+        </div>
+    </div>
+
+    <!-- ================= MÀN HÌNH CHÍNH (BỊ ẨN ĐI) ================= -->
+    <div id="main-content" class="max-w-5xl mx-auto hidden">
+
+        <!-- HEADER & LOGO CHỮ M -->
+        <div class="text-center mb-14 mt-4 flex flex-col items-center">
+            <div class="seal mb-6">
+                <span>M</span>
+            </div>
+            <h1 class="font-display text-4xl md:text-5xl text-white mb-3 tracking-tight">
+                Công phá kỳ thi <span class="italic" style="color:#D8C48C;">TSA · HSA</span>
+            </h1>
+            <p class="text-slate-300 text-sm">Hệ thống thi thử đánh giá tư duy &amp; đánh giá năng lực</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+            <!-- CỘT 1: ĐỀ THI TSA -->
+            <div class="panel">
+                <div class="panel-head flex items-baseline justify-between">
+                    <h2 class="font-display text-xl tsa-accent">Tư duy (TSA)</h2>
+                    <span class="text-xs text-[var(--muted)]">04 đề</span>
+                </div>
+                <div class="row-list flex flex-col">
+                    <a href="tsa1.html" target="_blank" class="px-7 py-5 flex items-center gap-4 hover:bg-[var(--wine-soft)] transition-colors group">
+                        <span class="num tsa-num-badge w-9 h-9 rounded-full flex items-center justify-center shrink-0">01</span>
+                        <span class="font-semibold text-[var(--ink)]">Luyện đề TSA 01</span>
+                        <span class="ml-auto tsa-accent opacity-0 group-hover:opacity-100 transition-opacity">→</span>
+                    </a>
+                    <a href="tsa2.html" target="_blank" class="px-7 py-5 flex items-center gap-4 hover:bg-[var(--wine-soft)] transition-colors group">
+                        <span class="num tsa-num-badge w-9 h-9 rounded-full flex items-center justify-center shrink-0">02</span>
+                        <span class="font-semibold text-[var(--ink)]">Luyện đề TSA 02</span>
+                        <span class="ml-auto tsa-accent opacity-0 group-hover:opacity-100 transition-opacity">→</span>
+                    </a>
+                    <a href="tsa3.html" target="_blank" class="px-7 py-5 flex items-center gap-4 hover:bg-[var(--wine-soft)] transition-colors group">
+                        <span class="num tsa-num-badge w-9 h-9 rounded-full flex items-center justify-center shrink-0">03</span>
+                        <span class="font-semibold text-[var(--ink)]">Luyện đề TSA 03</span>
+                        <span class="ml-auto tsa-accent opacity-0 group-hover:opacity-100 transition-opacity">→</span>
+                    </a>
+		    <a href="tsa4.html" target="_blank" class="px-7 py-5 flex items-center gap-4 hover:bg-[var(--wine-soft)] transition-colors group">
+                        <span class="num tsa-num-badge w-9 h-9 rounded-full flex items-center justify-center shrink-0">04</span>
+                        <span class="font-semibold text-[var(--ink)]">Luyện đề TSA 04</span>
+                        <span class="ml-auto tsa-accent opacity-0 group-hover:opacity-100 transition-opacity">→</span>
+                    </a>
+		    <a href="tsa5.html" target="_blank" class="px-7 py-5 flex items-center gap-4 hover:bg-[var(--wine-soft)] transition-colors group">
+                        <span class="num tsa-num-badge w-9 h-9 rounded-full flex items-center justify-center shrink-0">05</span>
+                        <span class="font-semibold text-[var(--ink)]">Luyện đề TSA 05</span>
+                        <span class="ml-auto tsa-accent opacity-0 group-hover:opacity-100 transition-opacity">→</span>
+                    </a>
+
+
+                </div>
+            </div>
+
+            <!-- CỘT 2: ĐỀ THI HSA -->
+            <div class="panel">
+                <div class="panel-head flex items-baseline justify-between">
+                    <h2 class="font-display text-xl hsa-accent">Năng lực (HSA)</h2>
+                    <span class="text-xs text-[var(--muted)]">04 đề</span>
+                </div>
+                <div class="row-list flex flex-col">
+                    <a href="hsa1.html" target="_blank" class="px-7 py-5 flex items-center gap-4 hover:bg-[var(--steel-soft)] transition-colors group">
+                        <span class="num hsa-num-badge w-9 h-9 rounded-full flex items-center justify-center shrink-0">01</span>
+                        <span class="font-semibold text-[var(--ink)]">Luyện đề HSA 01</span>
+                        <span class="ml-auto hsa-accent opacity-0 group-hover:opacity-100 transition-opacity">→</span>
+                    </a>
+                    <a href="hsa2.html" target="_blank" class="px-7 py-5 flex items-center gap-4 hover:bg-[var(--steel-soft)] transition-colors group">
+                        <span class="num hsa-num-badge w-9 h-9 rounded-full flex items-center justify-center shrink-0">02</span>
+                        <span class="font-semibold text-[var(--ink)]">Luyện đề HSA 02</span>
+                        <span class="ml-auto hsa-accent opacity-0 group-hover:opacity-100 transition-opacity">→</span>
+                    </a>
+                    <a href="hsa3.html" target="_blank" class="px-7 py-5 flex items-center gap-4 hover:bg-[var(--steel-soft)] transition-colors group">
+                        <span class="num hsa-num-badge w-9 h-9 rounded-full flex items-center justify-center shrink-0">03</span>
+                        <span class="font-semibold text-[var(--ink)]">Luyện đề HSA 03</span>
+                        <span class="ml-auto hsa-accent opacity-0 group-hover:opacity-100 transition-opacity">→</span>
+                    </a>
+		    <a href="hsa4.html" target="_blank" class="px-7 py-5 flex items-center gap-4 hover:bg-[var(--steel-soft)] transition-colors group">
+                        <span class="num hsa-num-badge w-9 h-9 rounded-full flex items-center justify-center shrink-0">04</span>
+                        <span class="font-semibold text-[var(--ink)]">Luyện đề HSA 04</span>
+                        <span class="ml-auto hsa-accent opacity-0 group-hover:opacity-100 transition-opacity">→</span>
+                    </a>
+
+                </div>
+            </div>
+
+        </div>
+
+        <div class="text-center mt-12 text-slate-400 text-sm">
+            <p>© 2026 Hệ thống phát triển bởi M.</p>
+        </div>
+    </div>
+
+    <!-- ================= SCRIPT XỬ LÝ MẬT KHẨU ================= -->
+    <script>
+        // BẠN THAY ĐỔI MẬT KHẨU Ở DÒNG DƯỚI NÀY
+        const MY_PASSWORD = "21052007";
+
+        function checkPassword(event) {
+            event.preventDefault();
+            const inputVal = document.getElementById('password-box').value;
+            const errorMsg = document.getElementById('error-msg');
+
+            if (inputVal === MY_PASSWORD) {
+                // Giấu màn hình khóa
+                document.getElementById('lock-screen-wrapper').style.display = 'none';
+                // Hiện nội dung chính
+                document.getElementById('main-content').classList.remove('hidden');
+            } else {
+                // Hiện báo lỗi và xóa chữ vừa nhập
+                errorMsg.classList.remove('hidden');
+                document.getElementById('password-box').value = '';
+            }
+        }
+    </script>
+</body>
+</html>
